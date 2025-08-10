@@ -16,7 +16,14 @@ with st.sidebar:
     # Start date/time: Aug 9, 2025 at 08:00, Asia/Makassar
     tz_makassar = tz.gettz("Asia/Makassar")
     default_start = datetime(2025, 8, 9, 8, 0, 0, tzinfo=tz_makassar)
-    start_dt = st.datetime_input("Calendar start", value=default_start, step=60)
+  
+
+    # Split into date + time for compatibility with older Streamlit versions
+    d = st.date_input("Calendar date", value=default_start.date())
+    t = st.time_input("Start time", value=default_start.time(), step=60)
+
+    # Combine back into a timezone-aware datetime
+    start_dt = datetime.combine(d, t).replace(tzinfo=tz_makassar)
 
     machines_n = st.number_input("Machines", min_value=1, max_value=20, value=5, step=1)
     machines = [f"M{i+1}" for i in range(machines_n)]
